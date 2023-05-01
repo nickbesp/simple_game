@@ -7,10 +7,10 @@ class Board:
         self.cells = [[' '] * self.width for i in range(self.height)]
 
     def put(self, x, y, symb):
-        self.cells[x][y] = symb
+        self.cells[y][x] = symb
 
     def check(self, x, y):
-        return self.cells[x][y] == ' '
+        return self.cells[y][x] == ' '
 
     def print(self):
         title = '   '
@@ -29,19 +29,22 @@ class Board:
     def checker(self, symb):
         for i in range(self.height):
             for j in range(self.width):
-                if i != j != 0 and i != j != self.height - 1:
-                    if j != 0 and j != self.width - 1:
-                        if self.cells[i][j - 1] == self.cells[i][j] == self.cells[i][j + 1] == symb:
-                            return True
-                    if i != 0 and i != self.height - 1:
-                        if self.cells[i - 1][j] == self.cells[i][j] == self.cells[i + 1][j] == symb:
-                            return True
-                    if i != 0 and i != self.height - 1 and j != 0 and j != self.width - 1:
-                        if (self.cells[i - 1][j - 1] == self.cells[i][j] == self.cells[i + 1][j + 1] == symb) or (self.cells[i + 1][j - 1] == self.cells[i][j] == self.cells[i - 1][j + 1] == symb):
-                            return True
+                if (i == 0 or i == self.height - 1) and 0 < j < self.width - 1:
+                    if self.cells[i][j - 1] == self.cells[i][j] == self.cells[i][j + 1] == symb: #горизонтальная линия
+                        return True
+                if (j == 0 or j == self.width - 1) and 0 < i < self.height - 1:
+                    if self.cells[i - 1][j] == self.cells[i][j] == self.cells[i + 1][j] == symb: #вертикальная линия
+                        return True
+                if i > 0 and j > 0 and i < self.height - 1 and j < self.width - 1:
+                    if self.cells[i][j - 1] == self.cells[i][j] == self.cells[i][j + 1] == symb: #горизонтальная линия
+                        return True
+                    if self.cells[i - 1][j] == self.cells[i][j] == self.cells[i + 1][j] == symb: #вертикальная линия
+                        return True
+                    if self.cells[i - 1][j - 1] == self.cells[i][j] == self.cells[i + 1][j + 1] == symb: #главная диагональ
+                        return True
+                    if self.cells[i + 1][j - 1] == self.cells[i][j] == self.cells[i - 1][j + 1] == symb: #обратная диагональ
+                        return True
         return False
-
-
 
 class Player:
     def __init__(self, symbol):
@@ -70,7 +73,6 @@ class Bot(Player):
         else:
             return (x, y)
 
-
 if __name__ == "__main__":
     symbol = input('Выберите знак, которым будете играть: \n')
     while symbol == ' ' or len(symbol) != 1:
@@ -78,6 +80,10 @@ if __name__ == "__main__":
         symbol = input('Выберите знак, которым будете играть: \n')
 
     width, height = map(int, input('Назовите размерность поля: (Квадратное) \n').split())
+    while width < 3 or height < 3:
+        print('Минимальный размер поля - 3X3')
+        width, height = map(int, input('Назовите размерность поля: (Квадратное) \n').split())
+    
     board = Board(height, width)
     player = Player(symbol)
 
@@ -114,7 +120,6 @@ if __name__ == "__main__":
         if board.checker(bot.symb):
            winner = 'bot'
            break
-
-        
+    
     board.print()
     print(f'Победитель: {winner}')
