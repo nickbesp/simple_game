@@ -1,1 +1,3 @@
 # simple_game
+The game is on Russian, because I am Russian :)
+So if you want to play, you should speak Russian or know how to use a translator...
